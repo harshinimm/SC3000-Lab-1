@@ -6,7 +6,6 @@ import time
 from collections import defaultdict
 from typing import Dict, List, Tuple, Optional
 
-# ============================================================
 # Part 1: NYC shortest path with energy budget
 # ============================================================
 # Assignment facts used here:
@@ -21,7 +20,6 @@ START_NODE = "1"
 GOAL_NODE = "50"
 ENERGY_BUDGET = 287932
 
-# ============================================================
 # Part 2: Grid world
 # ============================================================
 GRID_SIZE = 5
@@ -37,7 +35,6 @@ Q_EPSILON = 0.1
 Q_ALPHA = 0.1
 
 
-# ============================================================
 # General helpers
 # ============================================================
 def load_json(path: str):
@@ -100,7 +97,6 @@ def print_part1_result(title: str, path: Optional[List[str]], total_dist: float,
     print(f"Time taken: {time_taken:.6f} seconds")
 
 
-# ============================================================
 # Part 1 Task 1: UCS without energy constraint
 # ============================================================
 def ucs_task1(G, Dist, Cost, start=START_NODE, goal=GOAL_NODE):
@@ -132,7 +128,6 @@ def ucs_task1(G, Dist, Cost, start=START_NODE, goal=GOAL_NODE):
     return path, total_dist, total_cost,time_taken
 
 
-# ============================================================
 # Part 1 Task 2: UCS with energy constraint
 # State = (node, used_energy)
 # We keep non-dominated labels for pruning.
@@ -213,7 +208,6 @@ def ucs_task2(G, Dist, Cost, budget=ENERGY_BUDGET, start=START_NODE, goal=GOAL_N
     return path, total_dist, total_cost, time_taken
 
 
-# ============================================================
 # Part 1 Task 3: A* with energy constraint
 # Heuristic: Euclidean distance between coordinates.
 # This is admissible for road distance if straight-line distance
@@ -281,7 +275,6 @@ def astar_task3(G, Coord, Dist, Cost, budget=ENERGY_BUDGET, start=START_NODE, go
     return path, total_dist, total_cost, time_taken
 
 
-# ============================================================
 # Part 2: Grid world environment
 # ============================================================
 # We represent the grid world as a class to create environment
@@ -377,7 +370,6 @@ class GridWorld:
         return ns, rew, self.is_terminal(ns)
 
 
-# ============================================================
 # Policy / value display helpers
 # ============================================================
 def best_action_from_q(qvals: Dict[str, float]):
@@ -419,6 +411,7 @@ def print_values(V, title):
 
 
 # Part 2 Task 1: Value iteration and policy iteration
+# ============================================================
 #use Bellman optimality equation: V(s) = max_a sum_{s',r} P(s'|s,a)[r + gamma * V(s')]
 def value_iteration(env: GridWorld, gamma=GAMMA, theta=1e-8):
     states = env.states()
@@ -513,6 +506,7 @@ def policy_iteration(env: GridWorld, gamma=GAMMA, theta=1e-8):
 
 
 # Part 2 Task 2: Monte Carlo control
+# ============================================================
 # We generate episodes using the current policy (with epsilon-greedy exploration) and then update our Q-values based on the returns observed in those episodes.
 def epsilon_greedy_action(Q, state, epsilon):
     if random.random() < epsilon:
@@ -556,6 +550,7 @@ def mc_control(env: GridWorld, episodes=5000, gamma=GAMMA, epsilon=MC_EPSILON):
 
 
 # Part 2 Task 3: Q-learning
+# ============================================================
 def q_learning(env: GridWorld, episodes=5000, gamma=GAMMA, epsilon=Q_EPSILON, alpha=Q_ALPHA):
     Q = defaultdict(lambda: {a: 0.0 for a in ACTIONS})
 
@@ -578,6 +573,7 @@ def q_learning(env: GridWorld, episodes=5000, gamma=GAMMA, epsilon=Q_EPSILON, al
 
 
 # Main
+# ============================================================
 def run_part1():
     G, Coord, Dist, Cost = load_nyc_instance()
 
