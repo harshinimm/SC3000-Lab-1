@@ -392,8 +392,6 @@ def format_policy(policy: Dict[Tuple[int, int], str]) -> str:
             s = (x, y) #
             if s in BLOCKS:
                 row.append(" X ")
-            elif s == START_STATE:
-                row.append(" S ")
             elif s == GOAL_STATE:
                 row.append(" G ")
             else:
