@@ -26,7 +26,7 @@ ENERGY_BUDGET = 287932
 GRID_SIZE = 5
 START_STATE = (0, 0)
 GOAL_STATE = (4, 4)
-BLOCKS = {(1, 2), (3, 2)} # inverted since python is of form (x,y) but grid is (row, col)
+BLOCKS = {(2, 1), (2, 3)} # inverted since python is of form (x,y) but grid is (row, col)
 ACTIONS = ["U", "D", "L", "R"]
 GAMMA = 0.9
 STEP_REWARD = -1
@@ -194,7 +194,7 @@ def ucs_task2(G, Dist, Cost, budget=ENERGY_BUDGET, start=START_NODE, goal=GOAL_N
     if best_goal_state is None:
         return None, float("inf"), float("inf")
 
-    # reconstruct
+    # reconstruct 
     rev = []
     cur = best_goal_state
     while cur is not None:
