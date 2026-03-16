@@ -389,7 +389,7 @@ def format_policy(policy: Dict[Tuple[int, int], str]) -> str:
     for y in range(GRID_SIZE - 1, -1, -1):
         row = []
         for x in range(GRID_SIZE):
-            s = (x, y) #
+            s = (x, y) 
             if s in BLOCKS:
                 row.append(" X ")
             elif s == GOAL_STATE:
@@ -418,9 +418,8 @@ def print_values(V, title):
         print(" ".join(row))
 
 
-# ============================================================
 # Part 2 Task 1: Value iteration and policy iteration
-# ============================================================
+#use Bellman optimality equation: V(s) = max_a sum_{s',r} P(s'|s,a)[r + gamma * V(s')]
 def value_iteration(env: GridWorld, gamma=GAMMA, theta=1e-8):
     states = env.states()
     V = {s: 0.0 for s in states}
@@ -460,7 +459,8 @@ def value_iteration(env: GridWorld, gamma=GAMMA, theta=1e-8):
         policy[s] = best_a
     return V, policy
 
-
+# Policy evaluation: given a policy, compute its value function by iterating on the Bellman expectation equation:
+# V(s) = sum_a pi(a|s) sum_{s',r} P(s'|s,a)[r + gamma * V(s')]  
 def policy_evaluation(env: GridWorld, policy, gamma=GAMMA, theta=1e-8):
     states = env.states()
     V = {s: 0.0 for s in states}
@@ -483,7 +483,8 @@ def policy_evaluation(env: GridWorld, policy, gamma=GAMMA, theta=1e-8):
             break
     return V
 
-
+# Policy iteration: iteratively evaluate the current policy and then improve it until convergence.
+# In the improvement step, we check if there is a better action than the current policy action for each state. If not, we are stable and can stop.
 def policy_iteration(env: GridWorld, gamma=GAMMA, theta=1e-8):
     states = env.states()
     policy = {s: "U" for s in states if not env.is_terminal(s)}
@@ -511,9 +512,8 @@ def policy_iteration(env: GridWorld, gamma=GAMMA, theta=1e-8):
             return V, policy
 
 
-# ============================================================
 # Part 2 Task 2: Monte Carlo control
-# ============================================================
+# We generate episodes using the current policy (with epsilon-greedy exploration) and then update our Q-values based on the returns observed in those episodes.
 def epsilon_greedy_action(Q, state, epsilon):
     if random.random() < epsilon:
         return random.choice(ACTIONS)
@@ -554,9 +554,8 @@ def mc_control(env: GridWorld, episodes=5000, gamma=GAMMA, epsilon=MC_EPSILON):
     return Q, policy
 
 
-# ============================================================
+
 # Part 2 Task 3: Q-learning
-# ============================================================
 def q_learning(env: GridWorld, episodes=5000, gamma=GAMMA, epsilon=Q_EPSILON, alpha=Q_ALPHA):
     Q = defaultdict(lambda: {a: 0.0 for a in ACTIONS})
 
@@ -578,9 +577,7 @@ def q_learning(env: GridWorld, episodes=5000, gamma=GAMMA, epsilon=Q_EPSILON, al
     return Q, policy
 
 
-# ============================================================
 # Main
-# ============================================================
 def run_part1():
     G, Coord, Dist, Cost = load_nyc_instance()
 
