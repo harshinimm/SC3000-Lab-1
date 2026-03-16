@@ -114,11 +114,11 @@ def ucs_task1(G, Dist, Cost, start=START_NODE, goal=GOAL_NODE):
             break
 
         for v in G.get(u, []):
-            nd = d + Dist[edge_key(u, v)]
-            if nd < best_dist.get(v, float("inf")):
-                best_dist[v] = nd
+            new_dist = d + Dist[edge_key(u, v)]
+            if new_dist < best_dist.get(v, float("inf")):
+                best_dist[v] = new_dist
                 parent[v] = u
-                heapq.heappush(pq, (nd, v))
+                heapq.heappush(pq, (new_dist, v))
 
     path = reconstruct_path(parent, goal)
     if not path:
@@ -141,9 +141,9 @@ def is_dominated(labels, new_dist, new_energy):
 # Keeps an old label unless the new label is better or equal in both distance and energy.
 def add_label(labels, new_dist, new_energy):
     kept = []
-    for d, e in labels:
-        if not (new_dist <= d and new_energy <= e):
-            kept.append((d, e))
+    for dist, energy in labels:
+        if not (new_dist <= dist and new_energy <= energy):
+            kept.append((dist, energy))
     kept.append((new_dist, new_energy))
     return kept
 
@@ -158,38 +158,38 @@ def ucs_task2(G, Dist, Cost, budget=ENERGY_BUDGET, start=START_NODE, goal=GOAL_N
     best_goal_dist = float("inf")
 
     while pq:
-        dist_so_far, energy_so_far, u = heapq.heappop(pq)
+        dist_so_far, energy_so_far, node = heapq.heappop(pq)
 
         # skip if we already have a better path to the goal
         if dist_so_far > best_goal_dist:
             continue
         
         # check if we reached the goal 
-        if u == goal:
+        if node == goal:
             if dist_so_far < best_goal_dist:
                 best_goal_dist = dist_so_far
-                best_goal_state = (u, energy_so_far)
+                best_goal_state = (node, energy_so_far)
             continue
         
         # expand neighbors
-        for v in G.get(u, []):
-            k = edge_key(u, v)
+        for v in G.get(node, []):
+            k = edge_key(node, v)
             # compute new distance and energy
-            nd = dist_so_far + Dist[k]
-            ne = energy_so_far + Cost[k]
+            new_dist = dist_so_far + Dist[k]
+            new_energy = energy_so_far + Cost[k]
 
             # skip if energy exceeds budget
-            if ne > budget:
+            if new_energy > budget:
                 continue
 
             # skip if this path is dominated by an existing label for v
-            if is_dominated(labels[v], nd, ne):
+            if is_dominated(labels[v], new_dist, new_energy):
                 continue
             
             # add new label and push to queue
-            labels[v] = add_label(labels[v], nd, ne)
-            parent[(v, ne)] = (u, energy_so_far)
-            heapq.heappush(pq, (nd, ne, v))
+            labels[v] = add_label(labels[v], new_dist, new_energy)
+            parent[(v, new_energy)] = (node, energy_so_far)
+            heapq.heappush(pq, (new_dist, new_energy, v))
 
     if best_goal_state is None:
         return None, float("inf"), float("inf")
@@ -605,6 +605,5 @@ def run_part2():
 
 
 if __name__ == "__main__":
-    random.seed(42)
     run_part1()
     run_part2()
