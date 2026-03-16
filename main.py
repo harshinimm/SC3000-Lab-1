@@ -99,9 +99,9 @@ def print_part1_result(title: str, path: Optional[List[str]], total_dist: float,
 
 
 # ============================================================
-# Part 1 Task 1: Dijkstra / UCS without energy constraint
+# Part 1 Task 1: UCS without energy constraint
 # ============================================================
-def dijkstra_task1(G, Dist, Cost, start=START_NODE, goal=GOAL_NODE):
+def ucs_task1(G, Dist, Cost, start=START_NODE, goal=GOAL_NODE):
     pq = [(0.0, start)]
     best_dist = {start: 0.0}
     parent = {start: None}
@@ -575,8 +575,8 @@ def q_learning(env: GridWorld, episodes=5000, gamma=GAMMA, epsilon=Q_EPSILON, al
 def run_part1():
     G, Coord, Dist, Cost = load_nyc_instance()
 
-    path1, d1, c1 = dijkstra_task1(G, Dist, Cost)
-    print_part1_result("Part 1 - Task 1 (Dijkstra)", path1, d1, c1)
+    path1, d1, c1 = ucs_task1(G, Dist, Cost)
+    print_part1_result("Part 1 - Task 1 (UCS without energy constraint)", path1, d1, c1)
 
     path2, d2, c2 = ucs_task2(G, Dist, Cost)
     print_part1_result("Part 1 - Task 2 (UCS with energy budget)", path2, d2, c2)
