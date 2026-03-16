@@ -2,6 +2,7 @@ import json
 import math
 import heapq
 import random
+import time
 from collections import defaultdict
 from typing import Dict, List, Tuple, Optional
 
@@ -88,7 +89,7 @@ def path_distance_and_energy(path: List[str], Dist: Dict[str, float], Cost: Dict
     return total_dist, total_cost
 
 
-def print_part1_result(title: str, path: Optional[List[str]], total_dist: float, total_cost: float):
+def print_part1_result(title: str, path: Optional[List[str]], total_dist: float, total_cost: float, time_taken: float):
     print(f"\n[{title}]")
     if not path:
         print("Shortest path: No feasible path found.")
@@ -96,12 +97,14 @@ def print_part1_result(title: str, path: Optional[List[str]], total_dist: float,
     print("Shortest path:", "->".join(path))
     print(f"Shortest distance: {total_dist:.6f}")
     print(f"Total energy cost: {total_cost:.6f}")
+    print(f"Time taken: {time_taken:.6f} seconds")
 
 
 # ============================================================
 # Part 1 Task 1: UCS without energy constraint
 # ============================================================
 def ucs_task1(G, Dist, Cost, start=START_NODE, goal=GOAL_NODE):
+    time_start = time.perf_counter()
     pq = [(0.0, start)]
     best_dist = {start: 0.0}
     parent = {start: None}
@@ -124,7 +127,9 @@ def ucs_task1(G, Dist, Cost, start=START_NODE, goal=GOAL_NODE):
     if not path:
         return None, float("inf"), float("inf")
     total_dist, total_cost = path_distance_and_energy(path, Dist, Cost)
-    return path, total_dist, total_cost
+    time_end = time.perf_counter()
+    time_taken = time_end - time_start
+    return path, total_dist, total_cost,time_taken
 
 
 # ============================================================
@@ -149,6 +154,7 @@ def add_label(labels, new_dist, new_energy):
 
 
 def ucs_task2(G, Dist, Cost, budget=ENERGY_BUDGET, start=START_NODE, goal=GOAL_NODE):
+    time_start = time.perf_counter()
     pq = [(0.0, 0.0, start)]  # (distance, energy, node)
     parent = {(start, 0.0): None}
     labels = defaultdict(list)
@@ -202,7 +208,9 @@ def ucs_task2(G, Dist, Cost, budget=ENERGY_BUDGET, start=START_NODE, goal=GOAL_N
         cur = parent[cur]
     path = rev[::-1]
     total_dist, total_cost = path_distance_and_energy(path, Dist, Cost)
-    return path, total_dist, total_cost
+    time_end = time.perf_counter()
+    time_taken = time_end - time_start
+    return path, total_dist, total_cost, time_taken
 
 
 # ============================================================
@@ -219,6 +227,7 @@ def euclidean_heuristic(node: str, goal: str, Coord: Dict[str, Tuple[float, floa
 
 
 def astar_task3(G, Coord, Dist, Cost, budget=ENERGY_BUDGET, start=START_NODE, goal=GOAL_NODE):
+    time_start = time.perf_counter()
     start_h = euclidean_heuristic(start, goal, Coord)
     pq = [(start_h, 0.0, 0.0, start)]  # (f, g (distance), energy, node)
     parent = {(start, 0.0): None}
@@ -267,7 +276,9 @@ def astar_task3(G, Coord, Dist, Cost, budget=ENERGY_BUDGET, start=START_NODE, go
         cur = parent[cur]
     path = rev[::-1]
     total_dist, total_cost = path_distance_and_energy(path, Dist, Cost)
-    return path, total_dist, total_cost
+    time_end = time.perf_counter()
+    time_taken = time_end - time_start
+    return path, total_dist, total_cost, time_taken
 
 
 # ============================================================
@@ -575,14 +586,14 @@ def q_learning(env: GridWorld, episodes=5000, gamma=GAMMA, epsilon=Q_EPSILON, al
 def run_part1():
     G, Coord, Dist, Cost = load_nyc_instance()
 
-    path1, d1, c1 = ucs_task1(G, Dist, Cost)
-    print_part1_result("Part 1 - Task 1 (UCS without energy constraint)", path1, d1, c1)
+    path1, d1, c1, t1 = ucs_task1(G, Dist, Cost)
+    print_part1_result("Part 1 - Task 1 (UCS without energy constraint)", path1, d1, c1, t1)
 
-    path2, d2, c2 = ucs_task2(G, Dist, Cost)
-    print_part1_result("Part 1 - Task 2 (UCS with energy budget)", path2, d2, c2)
+    path2, d2, c2, t2 = ucs_task2(G, Dist, Cost)
+    print_part1_result("Part 1 - Task 2 (UCS with energy budget)", path2, d2, c2, t2)
 
-    path3, d3, c3 = astar_task3(G, Coord, Dist, Cost)
-    print_part1_result("Part 1 - Task 3 (A* with energy budget)", path3, d3, c3)
+    path3, d3, c3, t3 = astar_task3(G, Coord, Dist, Cost)
+    print_part1_result("Part 1 - Task 3 (A* with energy budget)", path3, d3, c3, t3)
 
 
 
